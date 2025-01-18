@@ -1,0 +1,381 @@
+﻿<Page x:Class="DesktopGPT.DesktopGPTMain"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
+      mc:Ignorable="d" 
+      d:DesignHeight="800"
+      d:DesignWidth="1400"
+      Title="DesktopGPT - Home"
+      MouseDown="Page_MouseDown">
+
+    <Grid Focusable="True" Name="MainGrid">
+        <!-- Header Bar -->
+        <DockPanel LastChildFill="True">
+            <!-- Main Content -->
+            <Grid Background="#3b3b40">
+                <DockPanel>
+
+                    <!-- Chat Selection -->
+                    <Grid Width="250" DockPanel.Dock="Left">
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="70"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="50"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Grid.Row="0" Background="#2d2d32">
+                            <StackPanel DockPanel.Dock="Left" Background="#2d2d32" Width="250">
+                                <TextBlock Text="Chats"
+                                           Foreground="White"
+                                           FontSize="20"
+                                           FontWeight="Bold"
+                                           HorizontalAlignment="Center" 
+                                           Margin="19"/>
+                                <Separator Background="White" Height="1"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Row="1" Background="#2d2d32">
+                            <ListBox x:Name="Chats" Background="#2d2d32" Margin="0" SelectionChanged="Chats_SelectionChanged">
+                                <ListBox.Resources>
+                                    <Style TargetType="ListBoxItem">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="ListBoxItem">
+                                                    <Border x:Name="Bd" Background="Transparent" Padding="10">
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="230"/>
+                                                                <ColumnDefinition Width="50"/>
+                                                            </Grid.ColumnDefinitions>
+
+                                                            <ContentPresenter HorizontalAlignment="Left"
+                                                                              VerticalAlignment="Center"
+                                                                              Grid.Column="0"/>
+                                                            <Button Background="Transparent"
+                                                                    BorderBrush="Transparent"
+                                                                    Width="50"
+                                                                    Height="50"
+                                                                    ToolTip="Edit Name"
+                                                                    HorizontalAlignment="Right"
+                                                                    VerticalAlignment="Center"
+                                                                    Padding="0"
+                                                                    Click="PencilIcon_Click">
+                                                                <TextBlock Grid.Column="1"
+                                                                           FontFamily="Segoe MDL2 Assets"
+                                                                           FontSize="20"
+                                                                           Text="&#xE70F;"
+                                                                           Foreground="White"
+                                                                           VerticalAlignment="Center"
+                                                                           HorizontalAlignment="Right"
+                                                                           ToolTip="Edit Name"
+                                                                           Margin="10,0"/>
+                                                            </Button>
+                                                        </Grid>
+                                                    </Border>
+
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="Bd" Property="Background" Value="#3e3e42"/>
+                                                        </Trigger>
+
+                                                        <Trigger Property="IsSelected" Value="True">
+                                                            <Setter TargetName="Bd" Property="Background" Value="#4b4b50"/>
+                                                            <Setter TargetName="Bd" Property="BorderBrush" Value="Black"/>
+                                                        </Trigger>
+
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                        <Setter Property="Padding" Value="10"/>
+                                        <Setter Property="FontSize" Value="16"/>
+
+                                    </Style>
+                                </ListBox.Resources>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding}" VerticalAlignment="Center"/>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </Border>
+
+                        <!-- Buttons -->
+                        <Border Grid.Row="2" Background="#2d2d32">
+                            <Grid>
+                                <Button Background="Transparent"
+                                        BorderBrush="Transparent"
+                                        Width="60"
+                                        Height="50"
+                                        ToolTip="User Settings"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Click="UserInfoButton_Click">
+                                    <TextBlock FontFamily="Segoe MDL2 Assets"
+                                               Text="&#xE713;"
+                                               FontSize="37"
+                                               Foreground="White"
+                                               VerticalAlignment="Center"
+                                               HorizontalAlignment="Center"/>
+                                </Button>
+                                <Button Background="Transparent"
+                                        BorderBrush="Transparent"
+                                        Width="70"
+                                        Height="50"
+                                        ToolTip="New Chat"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        Padding="0"
+                                        Click="AddChat_Click">
+                                    <TextBlock FontFamily="Segoe MDL2 Assets"
+                                               Text="&#xE710;"
+                                               FontSize="32"
+                                               Foreground="White"
+                                               VerticalAlignment="Center"
+                                               HorizontalAlignment="Left"
+                                               Width="50"
+                                               Padding="10"/>
+                                </Button>
+                            </Grid>
+                        </Border>
+                        
+                        <!-- Popup for Settings -->
+                        <Popup x:Name="UserInfo" StaysOpen="False" Placement="Relative" HorizontalOffset="-11" VerticalOffset="548">
+                            <Border Background="#2d2d32" Padding="10" CornerRadius="5" Width="400" BorderBrush="White" BorderThickness="1">
+                                <StackPanel>
+                                    <TextBlock Text="User Settings" FontSize="18" FontWeight="Bold" Foreground="White" Margin="0,0,0,10"/>
+
+                                    <!-- Settings Grid -->
+                                    <StackPanel>
+                                        <!-- API Key -->
+                                        <Grid Margin="0,5,0,5">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="85"/>
+                                                <!-- For Label -->
+                                                <ColumnDefinition Width="315"/>
+                                                <!-- For Textbox -->
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock Text="API Key:" Foreground="White" VerticalAlignment="Center" Margin="0,0,0,0"/>
+                                            <PasswordBox x:Name="APIKey_Input"
+                                                         Width="290"
+                                                         HorizontalAlignment="Left"
+                                                         PasswordChar="●"
+                                                         Grid.Column="1"/>
+                                        </Grid>
+
+                                        <!-- Temperature -->
+                                        <Grid Margin="0,5,0,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="85"/>
+                                                <!-- For Label -->
+                                                <ColumnDefinition Width="270"/>
+                                                <!-- For Info Button -->
+                                                <ColumnDefinition Width="40"/>
+                                                <!-- For Textbox -->
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock Text="Temperature:"
+                                                       Foreground="White"
+                                                       VerticalAlignment="Center"
+                                                       Margin="0,0,0,0"/>
+
+                                            <TextBox x:Name="Temperature_Input"
+                                                     Width="270"
+                                                     Grid.Column="1"
+                                                     HorizontalAlignment="Left"
+                                                     PreviewTextInput="Temperature_Input_PreviewTextInput"
+                                                     TextChanged="Temperature_Input_TextChanged"/>
+
+                                            <Button Background="Transparent"
+                                                    BorderBrush="Transparent"
+                                                    HorizontalAlignment="Left"
+                                                    VerticalAlignment="Center"
+                                                    Width="20"
+                                                    Height="20"
+                                                    Margin="0"
+                                                    Grid.Column="2"
+                                                    Padding="0">
+                                                <TextBlock FontFamily="Segoe MDL2 Assets"
+                                                           FontSize="10"
+                                                           Foreground="White"
+                                                           HorizontalAlignment="Left"
+                                                           Text="&#xE946;"
+                                                           Margin="0"
+                                                           Padding="0"/>
+                                                <Button.ToolTip>
+                                                    <ToolTip>
+                                                        <StackPanel>
+                                                            <TextBlock TextWrapping="Wrap" Text="Randomness of Output:"/>
+                                                            <TextBlock TextWrapping="Wrap" Margin="20,0,0,0" Text="0.0 - focused and deterministic"/>
+                                                            <TextBlock TextWrapping="Wrap" Margin="20,0,0,0" Text="2.0 - random"/>
+                                                        </StackPanel>
+                                                    </ToolTip>
+                                                </Button.ToolTip>
+                                            </Button>
+                                        </Grid>
+                                        
+                                        <!-- Shortcut -->
+                                        <Grid Margin="0,5,0,5">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="85"/>
+                                                <!-- For Label -->
+                                                <ColumnDefinition Width="150"/>
+                                                <ColumnDefinition Width="150"/>
+                                                <!-- For Textboxes -->
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock Text="Shortcut:" Foreground="White" VerticalAlignment="Center" Margin="0,0,0,0"/>
+                                            <TextBox x:Name="KeyTextBox_Input"
+                                                     Width="143"
+                                                     HorizontalAlignment="Left"
+                                                     Grid.Column="1"
+                                                     Margin="0,0,0,0"/>
+                                            <TextBox x:Name="Modifiers_Input"
+                                                     Width="143"
+                                                     HorizontalAlignment="Left"
+                                                     Grid.Column="2"
+                                                     Margin="0,0,0,0"/>
+                                        </Grid>
+                                    </StackPanel>
+                                    <Grid>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="200"/>
+                                                <ColumnDefinition Width="200"/>
+                                            </Grid.ColumnDefinitions>
+                                        </Grid>
+
+                                        <Button Background="Transparent"
+                                                BorderBrush="Transparent"
+                                                Width="60"
+                                                Height="50"
+                                                ToolTip="Close"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Center"
+                                                Grid.Column="0"
+                                                Click="UserInfoButton_Click">
+                                            <TextBlock FontFamily="Segoe MDL2 Assets"
+                                                       Text="&#xE713;"
+                                                       FontSize="37"
+                                                       Foreground="White"
+                                                       VerticalAlignment="Center"
+                                                       HorizontalAlignment="Center"/>
+                                        </Button>
+
+                                        <Button Content="Save"
+                                                Width="80"
+                                                Margin="0,0,0,0"
+                                                HorizontalAlignment="Right"
+                                                Grid.Column="1"
+                                                Click="SaveSettings_Click"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+                        </Popup>
+                    </Grid>
+
+                    <!-- Chat -->
+                    <Grid Background="#3b3b40">
+                        <TextBlock Text="{Binding SelectedItem, ElementName=Chats, TargetNullValue='New Chat'}"
+                                   FontSize="25"
+                                   FontWeight="Bold"
+                                   Foreground="White"
+                                   VerticalAlignment="Top"
+                                   HorizontalAlignment="Center"
+                                   Margin="10"/>
+
+                        <ComboBox x:Name="ModelComboBox"
+                                  HorizontalAlignment="Right"
+                                  VerticalAlignment="Top"
+                                  Margin="0,20,20,0"
+                                  Width="150"
+                                  SelectionChanged="Models_SelectionChanged"
+                                  Background="#54545a"/>
+
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="60,92,20,125">
+                            <StackPanel x:Name="ChatPanel" Orientation="Vertical" />
+                        </ScrollViewer>
+                        
+                        <TextBox x:Name="UserChatBox"
+                                 HorizontalAlignment="Center"
+                                 VerticalAlignment="Bottom"
+                                 Margin="30"
+                                 Width="700"
+                                 Height="Auto"
+                                 MaxHeight="200"
+                                 MinHeight="70"
+                                 FontSize="16"
+                                 Background="#54545a"
+                                 Foreground="LightGray" 
+                                 AcceptsReturn="True"
+                                 VerticalScrollBarVisibility="Auto"
+                                 PreviewKeyDown="UserMessage_KeyDown"
+                                 GotFocus="UserChatBox_GotFocus"
+                                 LostFocus="UserChatBox_LostFocus"
+                                 Text="Enter your message..."
+                                 TextChanged="UserChatBox_TextChanged">
+                            
+                            <TextBox.Resources>
+                                <Style TargetType="TextBox">
+                                    <Style.Triggers>
+                                        <Trigger Property="Text" Value="Enter your message...">
+                                            <Setter Property="Foreground" Value="LightGray"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="CornerRadius" Value="7"/>
+                                </Style>
+                            </TextBox.Resources>
+
+                            <TextBox.Style>
+                                <Style TargetType="TextBox">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type TextBox}">
+                                                <Border x:Name="chat_border"
+                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                                        Background="{TemplateBinding Background}"
+                                                        SnapsToDevicePixels="True">
+                                                    <ScrollViewer x:Name="PART_ContentHost"
+                                                                  Focusable="false"
+                                                                  HorizontalScrollBarVisibility="Hidden"
+                                                                  VerticalScrollBarVisibility="Hidden"/>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsFocused" Value="True">
+                                                        <Setter Property="BorderBrush" Value="White"/>
+                                                    </Trigger>
+
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="BorderBrush" Value="LightGray"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
+
+                        <ComboBox x:Name="ImageComboBox"
+                                  HorizontalAlignment="Right"
+                                  VerticalAlignment="Bottom"
+                                  Margin="0,0,25,70"
+                                  Width="200"
+                                  SelectionChanged="ImageModels_SelectionChanged"
+                                  Background="#54545a"/>
+                    </Grid>
+                </DockPanel>
+            </Grid>
+        </DockPanel>
+
+    </Grid>
+</Page>
