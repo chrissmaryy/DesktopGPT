@@ -26,19 +26,6 @@ namespace DesktopGPT
         {
             InitializeComponent();
 
-            MessageBox.Show($"Current Directory: {Directory.GetCurrentDirectory()}");
-
-            try
-            {
-                DatabaseManager.InitializeDatabase();
-                MessageBox.Show($"Database initialized successfully");
-            }
-
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error initilizing database: {ex.Message}");
-            }
-
             if (IsUserInfoEmpty())
             {
                 UserInfoWindow userInfoWindow = new UserInfoWindow();

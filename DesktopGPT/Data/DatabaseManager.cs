@@ -44,6 +44,7 @@ namespace DesktopGPT.Data
 
             // Open connection
             SQLiteConnection connection = new SQLiteConnection("Data Source=desktop_gpt.db;Version=3;");
+            connection.Open();
 
             try
             {
@@ -53,6 +54,7 @@ namespace DesktopGPT.Data
                 {
                     command.ExecuteNonQuery();
                 }
+                connection.Close();
             }
             catch (Exception ex) 
             {

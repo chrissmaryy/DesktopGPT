@@ -1,9 +1,11 @@
 ﻿using System.Configuration;
 using System.Data;
 using System.Data.SQLite;
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using DesktopGPT.Data;
+using DesktopGPT.Windows;
 using GlobalHotKey;
 
 namespace DesktopGPT
@@ -19,6 +21,19 @@ namespace DesktopGPT
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+
+            MessageBox.Show($"Current Directory: {Directory.GetCurrentDirectory()}");
+
+            try
+            {
+                DatabaseManager.InitializeDatabase();
+                MessageBox.Show($"Database initialized successfully");
+            }
+
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error initilizing database: {ex.Message}");
+            }
 
             _hotKeyManager = new HotKeyManager();
             RegisterHotKey();

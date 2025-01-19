@@ -225,22 +225,17 @@
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="85"/>
                                                 <!-- For Label -->
-                                                <ColumnDefinition Width="150"/>
-                                                <ColumnDefinition Width="150"/>
-                                                <!-- For Textboxes -->
+                                                <ColumnDefinition Width="300"/>
+                                                <!-- For Textbox -->
                                             </Grid.ColumnDefinitions>
 
                                             <TextBlock Text="Shortcut:" Foreground="White" VerticalAlignment="Center" Margin="0,0,0,0"/>
-                                            <TextBox x:Name="KeyTextBox_Input"
-                                                     Width="143"
+                                            <TextBox x:Name="Shortcut_Input"
+                                                     Width="293"
                                                      HorizontalAlignment="Left"
                                                      Grid.Column="1"
-                                                     Margin="0,0,0,0"/>
-                                            <TextBox x:Name="Modifiers_Input"
-                                                     Width="143"
-                                                     HorizontalAlignment="Left"
-                                                     Grid.Column="2"
-                                                     Margin="0,0,0,0"/>
+                                                     Margin="0,0,0,0"
+                                                     PreviewKeyDown="ShortcutInput_PreviewKeyDown"/>
                                         </Grid>
                                     </StackPanel>
                                     <Grid>

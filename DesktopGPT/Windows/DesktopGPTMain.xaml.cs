@@ -23,10 +23,17 @@ namespace DesktopGPT
     /// </summary>
     public partial class DesktopGPTMain : Page
     {
+        private Key _key; // Stores the key pressed
+        private ModifierKeys _modifiers; // Stores the modifiers (Ctrl, Shift, etc.)
+
         public DesktopGPTMain ()
         {
             InitializeComponent();
             SetupComboBoxes();
+
+            // Load existing shortcut
+            var shortcut = UserRepository.LoadShortcut();
+            Shortcut_Input.Text = $"{shortcut.Modifiers} + {shortcut.Key}";
         }
 
         private void SetupComboBoxes()
@@ -211,13 +218,32 @@ namespace DesktopGPT
             
         }
 
+        private void ShortcutInput_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            // Capture the key and modifiers
+            _key = e.Key == Key.System ? e.SystemKey : e.Key; // Handle Alt key correctly
+            _modifiers = Keyboard.Modifiers;
+
+            // Display the combo in the TextBox
+            var shortcutText = new StringBuilder();
+            if (_modifiers.HasFlag(ModifierKeys.Control)) shortcutText.Append("Ctrl + ");
+            if (_modifiers.HasFlag(ModifierKeys.Shift)) shortcutText.Append("Shift + ");
+            if (_modifiers.HasFlag(ModifierKeys.Alt)) shortcutText.Append("Alt + ");
+            shortcutText.Append(_key.ToString());
+
+            Shortcut_Input.Text = shortcutText.ToString();
+
+            // Prevent default behavior
+            e.Handled = true;
+        }
+
         private void SaveSettings_Click(object sender, RoutedEventArgs e)
         {
             // Retrieve user input from the textboxes
             string api_key = APIKey_Input.Password;
             string temp = Temperature_Input.Text;
-            string key_input = KeyTextBox_Input.Text;
-            string modifiers_input = Modifiers_Input.Text;
+            string key_input = _key.ToString();
+            string modifiers_input = _modifiers.ToString();
 
             // Handle the input (e.g., save to configuration or update UI)
             MessageBox.Show($"API Key: {api_key}\nTemperature: {temp}\nKey Input: {key_input}\nModifiers Input: {modifiers_input}", "Settings Saved");
