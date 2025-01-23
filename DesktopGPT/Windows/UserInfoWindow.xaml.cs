@@ -63,6 +63,7 @@ namespace DesktopGPT.Windows
 
             UserRepository.InsertUserInfo(api_key, _key.ToString(), _modifiers.ToString().Replace(",", "+"), 1.0);
 
+            this.DialogResult = true;
             this.Close();
         }
     }
