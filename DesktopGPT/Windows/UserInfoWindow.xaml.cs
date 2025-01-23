@@ -41,7 +41,7 @@ namespace DesktopGPT.Windows
 
             // Display the combo in the TextBox
             var shortcutText = new StringBuilder();
-            if (_modifiers.HasFlag(ModifierKeys.Control)) shortcutText.Append("Ctrl + ");
+            if (_modifiers.HasFlag(ModifierKeys.Control)) shortcutText.Append("Control + ");
             if (_modifiers.HasFlag(ModifierKeys.Shift)) shortcutText.Append("Shift + ");
             if (_modifiers.HasFlag(ModifierKeys.Alt)) shortcutText.Append("Alt + ");
             shortcutText.Append(_key.ToString());
@@ -55,7 +55,13 @@ namespace DesktopGPT.Windows
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             string api_key = APIKey_Input.Password;
-            UserRepository.InsertUserInfo(api_key, _key.ToString(), _modifiers.ToString(), 1.0);
+            if (_key == Key.None && _modifiers == ModifierKeys.None)
+            {
+                _modifiers = ModifierKeys.Control | ModifierKeys.Shift;
+                _key = Key.O;
+            }
+
+            UserRepository.InsertUserInfo(api_key, _key.ToString(), _modifiers.ToString().Replace(",", "+"), 1.0);
 
             this.Close();
         }

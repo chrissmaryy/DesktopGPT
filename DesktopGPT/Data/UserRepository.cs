@@ -21,14 +21,23 @@ namespace DesktopGPT.Data
                     shortcut_modifiers
                 )
                 VALUES
-                    '{api_key}',
-                    '{temperature}',
-                    '{shortcut_key}',
-                    '{shortcut_modifiers}'
+                (
+                    @api_key,
+                    @temperature,
+                    @shortcut_key,
+                    @shortcut_modifiers
                 );
             ";
 
-            DatabaseManager.ExecuteNonQuery(query);
+            var parameters = new Dictionary<string, object>
+            {
+                { "@api_key", api_key },
+                { "@temperature", temperature },
+                { "@shortcut_key", shortcut_key },
+                { "@shortcut_modifiers", shortcut_modifiers }
+            };
+
+            DatabaseManager.ExecuteNonQuery(query, parameters);
         }
 
         public static void UpdateUserInfo(string api_key, float temperature, string shortcut_key, string shortcut_modifiers)
@@ -36,14 +45,23 @@ namespace DesktopGPT.Data
             string query = @$"
                 UPDATE User_Info
                 SET
-                    api_key = '{api_key}',
-                    temperature = {temperature},
-                    shortcut_key = '{shortcut_key}',
-                    shortcut_modifiers = '{shortcut_modifiers}'
-                WHERE user_id = 1;
+                    api_key = @api_key,
+                    temperature = @temperature,
+                    shortcut_key = @shortcut_key,
+                    shortcut_modifiers = @shortcut_modifiers
+                WHERE user_id = @user_id;
             ";
 
-            DatabaseManager.ExecuteNonQuery(query);
+            var parameters = new Dictionary<string, object>
+            {
+                { "@api_key", api_key },
+                { "@temperature", temperature },
+                { "@shortcut_key", shortcut_key },
+                { "@shortcut_modifiers", shortcut_modifiers },
+                { "@user_id", 1 }
+            };
+
+            DatabaseManager.ExecuteNonQuery(query, parameters);
         }
 
         public static (string Key, string Modifiers) LoadShortcut()
@@ -54,7 +72,7 @@ namespace DesktopGPT.Data
             if (!rows.Any())
             {
                 // Return default shortcut if no data found
-                return ("O", "Control,Shift");
+                return ("O", "Control + Shift");
             }
 
             var row = rows[0];

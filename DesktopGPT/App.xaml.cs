@@ -22,12 +22,9 @@ namespace DesktopGPT
         {
             base.OnStartup(e);
 
-            MessageBox.Show($"Current Directory: {Directory.GetCurrentDirectory()}");
-
             try
             {
                 DatabaseManager.InitializeDatabase();
-                MessageBox.Show($"Database initialized successfully");
             }
 
             catch (Exception ex)
@@ -52,7 +49,7 @@ namespace DesktopGPT
             var key = (Key)Enum.Parse(typeof(Key), shortcut.Key);
             // Parse modifiers
             var modifiers = ModifierKeys.None;
-            foreach (var modifier in shortcut.Modifiers.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries))
+            foreach (var modifier in shortcut.Modifiers.Split(new[] { '+', ' ' }, StringSplitOptions.RemoveEmptyEntries))
             {
                 modifiers |= (ModifierKeys)Enum.Parse(typeof(ModifierKeys), modifier);
             }

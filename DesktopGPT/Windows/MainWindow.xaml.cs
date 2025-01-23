@@ -51,8 +51,13 @@ namespace DesktopGPT
 
                 using (SQLiteCommand command = new SQLiteCommand(countQuery, connection))
                 {
+                    connection.Open();
+
+
                     long count = (long)command.ExecuteScalar();
                     return count == 0;
+
+                    connection.Close();
                 }
             }
         }

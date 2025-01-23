@@ -62,6 +62,34 @@ namespace DesktopGPT.Data
             }
         }
 
+        public static void ExecuteNonQuery(string query, Dictionary<string, object> parameters)
+        {
+            // Open connection
+            SQLiteConnection connection = new SQLiteConnection("Data Source=desktop_gpt.db;Version=3;");
+            connection.Open();
+
+            // Create SQL Command
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = query;
+
+            if (parameters != null)
+            {
+                foreach (var parameter in parameters)
+                {
+                    if (!parameter.Key.StartsWith("@"))
+                    {
+                        throw new ArgumentException($"Parameter name must start with '@': {parameter.Key}");
+                    }
+                    command.Parameters.AddWithValue(parameter.Key, parameter.Value ?? DBNull.Value);
+                }
+            }
+
+            // Execute Command
+            command.ExecuteNonQuery();
+
+            // Close connection
+            connection.Close();
+        }
         public static void ExecuteNonQuery(string query)
         {
             // Open connection
