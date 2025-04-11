@@ -64,6 +64,30 @@ namespace DesktopGPT.Data
             DatabaseManager.ExecuteNonQuery(query, parameters);
         }
 
+        public static List<Dictionary<string, object>> GetAPIKey()
+        {
+            string query = @$"
+                SELECT api_key
+                FROM User_Info
+            ";
+
+            List<Dictionary<string, object>> api_key = DatabaseManager.ExecuteReader(query);
+
+            return api_key;
+        }
+
+        public static List<Dictionary<string, object>> GetTemperature()
+        {
+            string query = @$"
+                SELECT temperature
+                FROM User_Info
+            ";
+
+            List<Dictionary<string, object>> temperature = DatabaseManager.ExecuteReader(query);
+
+            return temperature;
+        }
+
         public static (string Key, string Modifiers) LoadShortcut()
         {
             var rows = DatabaseManager.ExecuteReader("SELECT shortcut_key, shortcut_modifiers FROM User_Info LIMIT 1;");

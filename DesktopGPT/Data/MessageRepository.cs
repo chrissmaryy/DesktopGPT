@@ -13,12 +13,11 @@ namespace DesktopGPT.Data
     public class MessageRepository
     {
 
-        public static void InsertMessage(int message_id, int chat_id, string model, string role, string content, DateTime timestamp)
+        public static void InsertMessage(int chat_id, string model, string role, string content, DateTime timestamp)
         {
             string query = @$"
                 INSERT INTO Messages
                 (
-                    message_id,
                     chat_id,
                     model,
                     role,
@@ -38,7 +37,6 @@ namespace DesktopGPT.Data
 
             var parameters = new Dictionary<string, object>
             {
-                { "@message_id", message_id },
                 { "@chat_id", chat_id },
                 { "@model", model },
                 { "@role", role },
@@ -52,7 +50,7 @@ namespace DesktopGPT.Data
         public static List<Dictionary<string, object>> GetMessages(int chat_id)
         {
             string query = @$"
-                SELECT content, role, timestamp
+                SELECT role, content
                 FROM Messages
                 WHERE chat_id = {chat_id};
             ";

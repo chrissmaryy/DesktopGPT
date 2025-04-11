@@ -14,6 +14,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.IO;
 using DesktopGPT.Data;
+using DesktopGPT.Classes;
+using System.Windows.Threading;
 
 
 namespace DesktopGPT
@@ -26,6 +28,8 @@ namespace DesktopGPT
         private Key _key; // Stores the key pressed
         private ModifierKeys _modifiers; // Stores the modifiers (Ctrl, Shift, etc.)
 
+        private TextBlock? currentTextBox;
+
         public DesktopGPTMain ()
         {
             InitializeComponent();
@@ -34,12 +38,25 @@ namespace DesktopGPT
             // Load existing shortcut
             var shortcut = UserRepository.LoadShortcut();
             Shortcut_Input.Text = $"{shortcut.Modifiers} + {shortcut.Key}";
+
+
+            var chats = ChatRepository.GetChatList();
+            List<ChatItem> chatItems = new List<ChatItem>();
+
+            foreach (var chat in chats)
+            {
+                chatItems.Add(new ChatItem
+                {
+                    ChatID = Convert.ToInt32(chat["chat_id"]),
+                    ChatName = chat["chat_name"].ToString()
+                });
+            }
+
+            Chats.ItemsSource = chatItems;
         }
 
         private void SetupComboBoxes()
         {
-            Chats.ItemsSource = new List<string> { "Convo 1", "Convo 2", "Convo 3", "Convo 4" };
-
             var models = new List<string>
             {
                 "gpt-4o", "gpt-4o-mini", "o1", "o1-mini", "gpt-4-turbo", "gpt-4", "gpt-3.5-turbo"
@@ -61,9 +78,11 @@ namespace DesktopGPT
 
         private void Chats_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (Chats.SelectedItem is string selectedItem)
+            if (Chats.SelectedItem is ChatItem selectedChat)
             {
-                
+                int chatId = selectedChat.ChatID;
+                string chatName = selectedChat.ChatName;
+
             }
         }
 
@@ -111,6 +130,14 @@ namespace DesktopGPT
                         // Process the message (e.g., display or send it)
                         AddChatBubble(message, isUser: true);
 
+                        // PLACEHOLDER FOR DB Insertion
+                        if (Chats.SelectedItem == null)
+                        {
+                            ChatRepository.InsertChat("New Chat");
+                        }
+
+                        // PLACEHOLDER FOR API REQUEST
+
                         // Clear the TextBox after sending the message
                         UserChatBox.Clear();
 
@@ -126,10 +153,10 @@ namespace DesktopGPT
 
         private void AddChat_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("New Chat added");
+            Chats.SelectedItem = null;
         }
 
-        private void AddChatBubble(string message, bool isUser)
+        public TextBlock AddChatBubble(string message, bool isUser)
         {
             // Define custom colors
             string userBubbleColor = "#616166";  // User bubble color
@@ -140,7 +167,7 @@ namespace DesktopGPT
             Brush? backgroundColor = brushConverter.ConvertFromString(isUser ? userBubbleColor : botBubbleColor) as Brush;
             
             // Create a TextBlock for the chat message
-            TextBlock chatText = new TextBlock
+            TextBlock chatText = new()
             {
                 Text = message,
                 FontSize = 16,
@@ -167,6 +194,24 @@ namespace DesktopGPT
 
             // Auto-scroll to the bottom of the chat
             ScrollToBottom();
+
+            //RichTextBox messageRichTextBox = new()
+            //{
+            //    IsReadOnly = true,
+            //    BorderThickness = new Thickness(0),
+            //    FontSize = 16,
+            //    Padding = new Thickness(10),
+            //    Margin = new Thickness(0, 5, 30, 5),
+            //    Background = backgroundColor,
+            //    Foreground = Brushes.White,
+            //    HorizontalAlignment = isUser ? HorizontalAlignment.Right : HorizontalAlignment.Left,
+            //    MaxWidth = 300,
+            //    // Document = markdownManager.Markdown2FlowDocument(message)
+            //};
+
+
+
+            return chatText;
         }
 
         private void ScrollToBottom()
@@ -271,6 +316,29 @@ namespace DesktopGPT
                 MessageBox.Show("Invalid input. Please enter a valid number.");
                 textBox.Text = string.Empty;
             }
+        }
+
+        public async Task StreamResponseCallback(string message)
+        {
+            await Application.Current.Dispatcher.InvokeAsync(() =>
+            {
+                if (currentTextBox == null)
+                {
+                    currentTextBox = AddChatBubble(message, false);
+                    return;
+                }
+                //EditMessage(currentRichTextBox, message);
+            }, DispatcherPriority.Render);
+        }
+
+        //private void EditMessage(RichTextBox richTextBox, string newMessage)
+        //{
+        //    richTextBox.Document = markdownManager.Markdown2FlowDocument(newMessage);
+        //}
+
+        public void ErrorCallback(string message)
+        {
+            MessageBox.Show(message);
         }
 
     }

@@ -51,7 +51,7 @@ namespace DesktopGPT.Data
         public static List<Dictionary<string, object>> GetChatList()
         {
             string query = @$"
-                SELECT chat_id_ chat_name
+                SELECT chat_id, chat_name
                 FROM Chats
             ";
 

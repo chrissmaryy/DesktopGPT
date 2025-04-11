@@ -99,7 +99,7 @@
                                 </ListBox.Resources>
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding}" VerticalAlignment="Center"/>
+                                        <TextBlock Text="{Binding ChatName}" VerticalAlignment="Center"/>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                             </ListBox>
@@ -277,7 +277,7 @@
 
                     <!-- Chat -->
                     <Grid Background="#3b3b40">
-                        <TextBlock Text="{Binding SelectedItem, ElementName=Chats, TargetNullValue='New Chat'}"
+                        <TextBlock Text="{Binding SelectedItem.ChatName, ElementName=Chats, TargetNullValue='New Chat', FallbackValue='New Chat'}"
                                    FontSize="25"
                                    FontWeight="Bold"
                                    Foreground="White"
